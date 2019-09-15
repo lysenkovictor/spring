@@ -1,4 +1,4 @@
-package ua.graduation.warehouse.service.entity;
+package ua.graduation.warehouse.service.entity.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
