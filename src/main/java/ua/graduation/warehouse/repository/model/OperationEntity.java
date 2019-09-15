@@ -1,8 +1,7 @@
 package ua.graduation.warehouse.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,8 +9,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "t_operation")
-@Data
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OperationEntity {
 
     @Id
@@ -35,7 +37,7 @@ public class OperationEntity {
     private TypeOperationEntity typeOperationEntity;
 
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false, updatable = true, insertable = true)
     private ItemEntity itemEntity;
 

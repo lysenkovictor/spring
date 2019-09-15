@@ -7,10 +7,10 @@ import ua.graduation.warehouse.repository.model.EmailEntity;
 import ua.graduation.warehouse.repository.model.PhoneEntity;
 import ua.graduation.warehouse.repository.model.ProductOwnerEntity;
 import ua.graduation.warehouse.repository.model.TypeContactEntity;
-import ua.graduation.warehouse.service.entity.Contacts;
-import ua.graduation.warehouse.service.entity.Email;
-import ua.graduation.warehouse.service.entity.Phone;
-import ua.graduation.warehouse.service.entity.ProductOwner;
+import ua.graduation.warehouse.service.entity.request.Contacts;
+import ua.graduation.warehouse.service.entity.request.Email;
+import ua.graduation.warehouse.service.entity.request.Phone;
+import ua.graduation.warehouse.service.entity.request.ProductOwner;
 import ua.graduation.warehouse.service.ProductOwnerService;
 
 import java.util.List;

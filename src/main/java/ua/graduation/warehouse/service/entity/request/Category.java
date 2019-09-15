@@ -1,4 +1,4 @@
-package ua.graduation.warehouse.service.entity;
+package ua.graduation.warehouse.service.entity.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class Category {
+    private int id;
     private String categoryName;
 }

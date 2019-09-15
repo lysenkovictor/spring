@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ua.graduation.warehouse.repository.CategoryRepository;
 import ua.graduation.warehouse.repository.model.CategoryEntity;
 import ua.graduation.warehouse.service.CategoryService;
-import ua.graduation.warehouse.service.entity.Category;
+import ua.graduation.warehouse.service.entity.request.Category;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {

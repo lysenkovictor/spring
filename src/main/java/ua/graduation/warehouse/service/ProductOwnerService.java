@@ -1,6 +1,6 @@
 package ua.graduation.warehouse.service;
 
-import ua.graduation.warehouse.service.entity.ProductOwner;
+import ua.graduation.warehouse.service.entity.request.ProductOwner;
 
 public interface ProductOwnerService {
 

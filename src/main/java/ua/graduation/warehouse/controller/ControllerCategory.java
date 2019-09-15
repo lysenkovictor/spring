@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.graduation.warehouse.service.CategoryService;
-import ua.graduation.warehouse.service.entity.Category;
+import ua.graduation.warehouse.service.entity.request.Category;
 
 import javax.validation.Valid;
 

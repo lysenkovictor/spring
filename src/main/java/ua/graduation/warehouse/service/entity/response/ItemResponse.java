@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import ua.graduation.warehouse.service.entity.request.Category;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,17 +17,13 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class Item {
+public class ItemResponse {
 
     private int itemId;
     private int count;
     private BigDecimal price;
     private String title;
     private int productOwnerId;
-
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime dateAdd;
-    private List<Integer> categories;
+    private List<Category> categories;
 
 }

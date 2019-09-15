@@ -1,10 +1,14 @@
 package ua.graduation.warehouse.repository.model;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 @Entity
@@ -20,7 +24,7 @@ public class CategoryEntity {
     private String categoryName;
 
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "t_category_has_t_item",
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))

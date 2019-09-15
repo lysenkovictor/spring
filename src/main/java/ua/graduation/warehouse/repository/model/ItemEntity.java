@@ -7,15 +7,17 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+
 @Builder
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "t_item")
 public class ItemEntity {
 
@@ -33,7 +35,7 @@ public class ItemEntity {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name="product_owner_id")
     private ProductOwnerEntity productOwnerEntity;
 
@@ -41,14 +43,14 @@ public class ItemEntity {
     private LocalDateTime dateAdd;
 
     @JsonBackReference
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "t_category_has_t_item",
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<CategoryEntity> categories;
+    private List<CategoryEntity> categories;
 
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy="itemEntity")
-    private Set<OperationEntity> operationEntities;
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy="itemEntity")
+    private Collection<OperationEntity> operationEntities;
 
 }

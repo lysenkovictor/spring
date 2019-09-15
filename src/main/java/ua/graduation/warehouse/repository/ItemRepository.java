@@ -1,7 +1,6 @@
 package ua.graduation.warehouse.repository;
 
 import ua.graduation.warehouse.repository.model.ItemEntity;
-import ua.graduation.warehouse.service.entity.Item;
 
 import java.util.List;
 

@@ -4,13 +4,13 @@ import org.springframework.stereotype.Service;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.*;
 import ua.graduation.warehouse.service.ItemService;
-import ua.graduation.warehouse.service.entity.Item;
+import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.entity.request.Category;
+import ua.graduation.warehouse.service.entity.request.Item;
+import ua.graduation.warehouse.service.entity.response.ItemResponse;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -26,54 +26,48 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void addItem(Item item) {
-
-       LocalDateTime dateOperation =  LocalDateTime.now();
-       Set<OperationEntity> operationEntities = new HashSet<>();
-
-       OperationEntity operationEntity = OperationEntity.builder()
-                .price(item.getPrice())
-                .count(item.getCount())
-                .dateOperation(dateOperation)
-                .typeOperationEntity(TypeOperationEntity.builder().id(1).build())
-                .build();
-
-        operationEntities.add(operationEntity);
-
-
-       Set<CategoryEntity> categoryEntities = null;
-        if (item.getCategories() != null ) {
-            categoryEntities = getCategoryEntity(item.getCategories());
-        }
-
-       ItemEntity itemEntity =  ItemEntity.builder()
-                .productOwnerEntity(ProductOwnerEntity.builder().idProductOwner(item.getProductOwnerId()).build())
-                .count(item.getCount())
-                .dateAdd(LocalDateTime.now())
-                .price(item.getPrice())
-                .categories(categoryEntities)
-                .operationEntities(operationEntities)
-                .title(item.getTitle())
-                .build();
-
-        itemEntity.getOperationEntities().stream().forEach(el->el.setItemEntity(itemEntity));
-
+        ItemEntity itemEntity = getFormItemEntity(item, TypeOperation.ADD);
+        itemEntity.setCategories(
+                item.getCategories() != null ? getCategoryEntity(item.getCategories()) : null
+        );
         itemRepository.addItem(itemEntity);
     }
 
-
     @Override
     public void updateItem(Item item) {
+        ItemEntity itemEntity = getFormItemEntity(item, TypeOperation.UPDATE);
+        itemRepository.updateItem(itemEntity);
+    }
+
+    @Override
+    public List<ItemResponse> getAllItemsOwnerBy(int idOwner) {
+       List<ItemEntity> itemEntities  = itemRepository.getAllOwnerItemsBy(idOwner);
+
+        return itemEntities.stream()
+                .map(item-> ItemResponse.builder()
+                        .itemId(item.getId())
+                        .title(item.getTitle())
+                        .productOwnerId(idOwner)
+                        .price(item.getPrice())
+                        .count(item.getCount())
+                        .categories(item.getCategories().stream().map(el->Category.builder()
+                                .categoryName(el.getCategoryName())
+                                .id(el.getId()).build())
+                                .collect(Collectors.toList()))
+                        .build())
+                .collect(Collectors.toList());
+
+    }
+
+    private ItemEntity getFormItemEntity(Item item, TypeOperation typeOperation) {
         LocalDateTime dateOperation =  LocalDateTime.now();
-        Set<OperationEntity> operationEntities = new HashSet<>();
 
         OperationEntity operationEntity = OperationEntity.builder()
-                .price(BigDecimal.valueOf(2))
+                .price(item.getPrice())
                 .count(item.getCount())
                 .dateOperation(dateOperation)
-                .typeOperationEntity(TypeOperationEntity.builder().id(1).build())
+                .typeOperationEntity(TypeOperationEntity.builder().id(typeOperation.getType()).build())
                 .build();
-
-        operationEntities.add(operationEntity);
 
         ItemEntity itemEntity =  ItemEntity.builder()
                 .productOwnerEntity(ProductOwnerEntity.builder().idProductOwner(item.getProductOwnerId()).build())
@@ -81,20 +75,17 @@ public class ItemServiceImpl implements ItemService {
                 .id(item.getItemId())
                 .dateAdd(LocalDateTime.now())
                 .price(item.getPrice())
-                .operationEntities(operationEntities)
                 .title(item.getTitle())
+                .operationEntities(Collections.singletonList(operationEntity))
                 .build();
 
-       // itemEntity.getOperationEntities().stream().forEach(el->el.setItemEntity(itemEntity));
+        operationEntity.setItemEntity(itemEntity);
 
-        itemRepository.updateItem(itemEntity);
-
-
+        return itemEntity;
     }
 
-
-    private Set<CategoryEntity> getCategoryEntity(List<Integer> categoryId) {
+    private List<CategoryEntity> getCategoryEntity(List<Integer> categoryId) {
         return categoryId.stream().map(el->CategoryEntity.builder().id(el).build())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }
