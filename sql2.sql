@@ -40,9 +40,9 @@ SET = utf8;
 CREATE TABLE IF NOT EXISTS `service`.`t_type_contact`
 (
     `id`   INT(11)     NOT NULL AUTO_INCREMENT,
-    `type` VARCHAR(45) NULL DEFAULT NULL,
+    `typeId` VARCHAR(45) NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `type_UNIQUE` (`type` ASC) VISIBLE
+    UNIQUE INDEX `type_UNIQUE` (`typeId` ASC) VISIBLE
 )
     ENGINE = InnoDB
 AUTO_INCREMENT = 20
@@ -119,7 +119,7 @@ SET = utf8;
 CREATE TABLE IF NOT EXISTS `service`.`t_type_operation`
 (
     `id`   INT(11)     NOT NULL AUTO_INCREMENT,
-    `type` VARCHAR(45) NULL DEFAULT NULL,
+    `typeId` VARCHAR(45) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

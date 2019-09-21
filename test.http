@@ -1,4 +1,4 @@
-# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+# For a quick dateStringFrom check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
 #
 # Following HTTP Request Live Templates are available:
 # * 'gtrp' and 'gtr' create a GET request with or without query parameters;
@@ -9,9 +9,8 @@ POST http://localhost:8080/owner/add
 Content-Type: application/json
 
 {
-  "firstName": "Valeriya",
-  "lastName": "Lysenko2",
-  "companyName": "repo",
+  "companyName":"тест",
+  "firstName": "ererer",
   "contacts": {
     "phones": [
       {
@@ -29,7 +28,7 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8080/owner/delete/81
+DELETE http://localhost:8080/owner/delete/83
 
 ###
 GET http://localhost:8080/item/getByOwner/83
@@ -68,4 +67,31 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:8080/item/totalStatistic
+Content-Type: application/json
 
+{
+  "period": "CURRENT_DAY",
+  "typeOperation": "UPDATE"
+}
+
+
+
+###
+
+#+ add new product owner
+#• remove product owner (only product owners without any item currently
+#stored at warehouse could be removed
+#• store new item (items could be stored only for already known product
+#owners)
+#• withdraw item from warehouse (it is common situation with withdrawing
+#several different items for one product owner at once)
+#• provide list of all items for given product owner
+
+• prove list of active product owners
+
+• provide statistic information about amount and total cost of items stored
+and withdrawn for the last day/month
+
+• provide statistic information about active product owners: list of top 5
+product owners according to the total cost of items currently stored at warehouse, sorted by total price, starting with the biggest one

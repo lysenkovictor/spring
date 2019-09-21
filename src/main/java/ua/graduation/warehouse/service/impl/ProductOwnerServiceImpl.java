@@ -12,6 +12,7 @@ import ua.graduation.warehouse.service.entity.request.Email;
 import ua.graduation.warehouse.service.entity.request.Phone;
 import ua.graduation.warehouse.service.entity.request.ProductOwner;
 import ua.graduation.warehouse.service.ProductOwnerService;
+import ua.graduation.warehouse.service.validator.ProductOwnerValidator;
 
 import java.util.List;
 import java.util.Set;
@@ -22,18 +23,20 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
 
     private final ProductOwnerRepository productOwnerRepository;
     private final ItemRepository itemRepository;
+    private final ProductOwnerValidator productOwnerValidator;
 
 
     public ProductOwnerServiceImpl(ProductOwnerRepository productOwnerRepository,
-                                   ItemRepository itemRepository
+                                   ItemRepository itemRepository,
+                                   ProductOwnerValidator productOwnerValidator
                                    ) {
         this.productOwnerRepository = productOwnerRepository;
         this.itemRepository = itemRepository;
+        this.productOwnerValidator = productOwnerValidator;
     }
 
     @Override
     public int addProductOwner(ProductOwner productOwner) {
-
         Contacts contacts = productOwner.getContacts();
 
         List<EmailEntity> emailEntities = null;
@@ -65,7 +68,6 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
         }
         return productOwnerRepository.removeProductOwner(idProductOwner);
     }
-
 
     private List<EmailEntity> getEmailEntity(List<Email> emails) {
 

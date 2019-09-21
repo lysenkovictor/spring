@@ -5,10 +5,15 @@ import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.*;
 import ua.graduation.warehouse.service.ItemService;
 import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
+import ua.graduation.warehouse.service.entity.date.FilterDate;
 import ua.graduation.warehouse.service.entity.request.Category;
 import ua.graduation.warehouse.service.entity.request.Item;
+import ua.graduation.warehouse.service.entity.request.ItemStatisticInfo;
 import ua.graduation.warehouse.service.entity.response.ItemResponse;
+import ua.graduation.warehouse.service.entity.response.ItemStatisticInfoResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,13 +55,44 @@ public class ItemServiceImpl implements ItemService {
                         .productOwnerId(idOwner)
                         .price(item.getPrice())
                         .count(item.getCount())
-                        .categories(item.getCategories().stream().map(el->Category.builder()
+                        .categories(item.getCategories().stream()
+                                .map(el->Category.builder()
                                 .categoryName(el.getCategoryName())
                                 .id(el.getId()).build())
                                 .collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
+    }
 
+    @Override
+    public ItemStatisticInfoResponse getStatisticInformationAboutAmountAndTotalCostItems(ItemStatisticInfo itemStatisticInfo) {
+        TypeOperation typeOperation = TypeOperation.valueOf(itemStatisticInfo.getTypeOperation());
+        FilterBetweenDate filterBetweenDate;
+        List<ItemEntity> itemEntityList;
+
+        if (itemStatisticInfo.getDateFrom() != null && itemStatisticInfo.getDateTo() != null) {
+         filterBetweenDate =  FilterBetweenDate.builder()
+                    .dateStringFrom(String.valueOf(itemStatisticInfo.getDateFrom()))
+                    .dateStringTo(String.valueOf(itemStatisticInfo.getDateTo())).build();
+            itemEntityList = itemRepository.getItemByTypeAndDateOperation(typeOperation,filterBetweenDate);
+        }else {
+            filterBetweenDate = FilterDate.valueOf(itemStatisticInfo.getPeriod()).getPeriod();
+            itemEntityList = itemRepository.getItemByTypeAndDateOperation(typeOperation,filterBetweenDate);
+        }
+
+        BigDecimal totalCost = BigDecimal.ZERO;
+        int amount = 0;
+
+        for (ItemEntity item: itemEntityList) {
+           totalCost = totalCost.add(item.getPrice());
+           amount += item.getCount();
+        }
+
+        return ItemStatisticInfoResponse.builder()
+                .amount(amount)
+                .totalCost(totalCost)
+                .typeOperation(itemStatisticInfo.getTypeOperation())
+                .build();
     }
 
     private ItemEntity getFormItemEntity(Item item, TypeOperation typeOperation) {
@@ -66,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
                 .price(item.getPrice())
                 .count(item.getCount())
                 .dateOperation(dateOperation)
-                .typeOperationEntity(TypeOperationEntity.builder().id(typeOperation.getType()).build())
+                .typeOperationEntity(TypeOperationEntity.builder().id(typeOperation.getTypeId()).build())
                 .build();
 
         ItemEntity itemEntity =  ItemEntity.builder()
@@ -88,4 +124,5 @@ public class ItemServiceImpl implements ItemService {
         return categoryId.stream().map(el->CategoryEntity.builder().id(el).build())
                 .collect(Collectors.toList());
     }
+
 }

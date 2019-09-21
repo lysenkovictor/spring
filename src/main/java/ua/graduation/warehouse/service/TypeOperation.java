@@ -5,14 +5,14 @@ public enum  TypeOperation {
     ADD(1),
     UPDATE(2);
 
-    private int type;
+    private int typeId;
 
-    public int getType() {
-        return type;
+    public int getTypeId() {
+        return typeId;
     }
 
-    TypeOperation(int type) {
-        this.type = type;
+    TypeOperation(int typeId) {
+        this.typeId = typeId;
     }
 
 }

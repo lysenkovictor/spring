@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
+import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 
 
 import javax.persistence.EntityManager;
@@ -62,6 +64,36 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         return query.getResultList();
     }
+
+    @Override
+    public List<ItemEntity> getItemByTypeAndDateOperation(TypeOperation typeOperation, FilterBetweenDate filterBetweenDate) {
+        Query query = entityManager.createQuery(
+                "SELECT i FROM ItemEntity i " +
+                "JOIN i.operationEntities as op " +
+                "JOIN op.typeOperationEntity as t_op " +
+                "wHERE t_op.id =: typeOperationId");
+        query.setParameter("typeOperationId", typeOperation.getTypeId());
+
+        return query.getResultList();
+    }
+
+//
+//
+//    select  *  from service.t_item as i
+//    inner JOIN service.t_operation as o
+//    on i.id = o.item_id
+//    where o.type_operation_id = '2' and
+//    date_operation between '2019-09-15 00:00' and '2019-09-15 23:59:59.999999999'
+
+
+
+
+//    select  *  from service.t_item as i
+//    inner JOIN service.t_operation as o
+//    on i.id = o.item_id
+//    inner JOIN service.t_type_operation as tOp
+//    on o.type_operation_id = tOp.id
+//    where tOp.id = '2' and date_operation between '2019-09-15 00:00' and '2019-09-15 23:59:59.999999999'
 
 
 }

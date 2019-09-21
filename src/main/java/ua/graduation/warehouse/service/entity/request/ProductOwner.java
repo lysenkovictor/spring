@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -15,6 +17,8 @@ import java.util.Optional;
 public class ProductOwner {
 
     private int idProductOwner;
+
+    @NotBlank(message = "can't be null")
     private String firstName;
     private String lastName;
     private Optional<String> companyName;

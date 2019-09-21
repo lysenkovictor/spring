@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.graduation.warehouse.service.ItemService;
 import ua.graduation.warehouse.service.entity.request.Item;
+import ua.graduation.warehouse.service.entity.request.ItemStatisticInfo;
 import ua.graduation.warehouse.service.entity.response.ItemResponse;
+import ua.graduation.warehouse.service.entity.response.ItemStatisticInfoResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,6 +36,7 @@ public class ControllerItem {
         return responseEntity;
     }
 
+
     @RequestMapping(path = "update")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -51,6 +54,18 @@ public class ControllerItem {
     @ResponseBody
     public ResponseEntity getAllItemsOwnerBy(@Valid @PathVariable int idProductOwner) {
         List<ItemResponse>  itemResponses = itemService.getAllItemsOwnerBy(idProductOwner);
+        ResponseEntity responseEntity = ResponseEntity
+                .status(HttpStatus.OK)
+                .body(itemResponses);
+        return  responseEntity;
+    }
+
+
+    @RequestMapping(path = "totalStatistic")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity getStatisticItem(@Valid @RequestBody ItemStatisticInfo item) {
+        ItemStatisticInfoResponse itemResponses = itemService.getStatisticInformationAboutAmountAndTotalCostItems(item);
         ResponseEntity responseEntity = ResponseEntity
                 .status(HttpStatus.OK)
                 .body(itemResponses);
