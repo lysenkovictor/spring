@@ -5,6 +5,6 @@ import ua.graduation.warehouse.service.entity.request.ProductOwner;
 public interface ProductOwnerService {
 
     int addProductOwner(ProductOwner productOwner);
-    int deleteProductOwner(int idProductOwner);
+    void deleteProductOwner(int idProductOwner);
 
 }

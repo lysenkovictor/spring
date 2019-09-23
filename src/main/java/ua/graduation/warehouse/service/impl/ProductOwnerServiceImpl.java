@@ -12,7 +12,9 @@ import ua.graduation.warehouse.service.entity.request.Email;
 import ua.graduation.warehouse.service.entity.request.Phone;
 import ua.graduation.warehouse.service.entity.request.ProductOwner;
 import ua.graduation.warehouse.service.ProductOwnerService;
-import ua.graduation.warehouse.service.validator.ProductOwnerValidator;
+import ua.graduation.warehouse.controller.validator.ProductOwnerValidator;
+import ua.graduation.warehouse.service.impl.exeption.NotFoundOwner;
+import ua.graduation.warehouse.service.impl.exeption.OwnerСanNotBeDeletedException;
 
 import java.util.List;
 import java.util.Set;
@@ -61,16 +63,17 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
     }
 
     @Override
-    public int deleteProductOwner(int idProductOwner) {
+    public void deleteProductOwner(int idProductOwner) {
 
         if (!itemRepository.getAllOwnerItemsBy(idProductOwner).isEmpty()) {
-            throw new RuntimeException("owner can not be deleted");
+            throw new OwnerСanNotBeDeletedException("owner can not be deleted, product owner has item");
         }
-        return productOwnerRepository.removeProductOwner(idProductOwner);
+
+        if (productOwnerRepository.removeProductOwner(idProductOwner) == 0)
+            throw new NotFoundOwner(String.format("not found owner id = %s", idProductOwner));
     }
 
     private List<EmailEntity> getEmailEntity(List<Email> emails) {
-
         return  emails.stream()
                 .map(email -> EmailEntity
                         .builder()
@@ -81,7 +84,6 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
     }
 
     private Set<PhoneEntity> getPhoneEntity(List<Phone> phones) {
-
         return  phones.stream()
                 .peek(el-> System.out.println(el.typeId))
                 .map(p -> PhoneEntity
@@ -91,6 +93,5 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
                         .build())
                 .collect(Collectors.toSet());
     }
-
 
 }

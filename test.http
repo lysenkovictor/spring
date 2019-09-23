@@ -5,12 +5,16 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+
+###11111
+
 POST http://localhost:8080/owner/add
 Content-Type: application/json
 
 {
-  "companyName":"тест",
-  "firstName": "ererer",
+  "companyName":"тест3",
+  "firstName": "test3",
+  "lastName": "test3",
   "contacts": {
     "phones": [
       {
@@ -21,19 +25,18 @@ Content-Type: application/json
         "phone": "1234455",
         "typeId": 20
       }
-
     ]
   }
 }
 
-###
+###22222
 
-DELETE http://localhost:8080/owner/delete/83
+DELETE http://localhost:8080/owner/delete/3
 
-###
-GET http://localhost:8080/item/getByOwner/83
-###
+###33333
+GET http://localhost:8080/item/getByOwner/98
 
+###44444
 POST http://localhost:8080/category/add
 Content-Type: application/json
 
@@ -41,57 +44,58 @@ Content-Type: application/json
   "categoryName": "new category0000"
 }
 
-###
+###6666
 POST http://localhost:8080/item/add
 Content-Type: application/json
 
 {
-  "title": "newItem",
-  "count": 9,
-  "price": 400,
-  "productOwnerId": 83,
-  "dateAdd": "10/08/2019 11:36"
+  "title": "шарика ручкы",
+  "count": 1000,
+  "price": 5,
+  "productOwnerId": 98
 }
 
-###
+###7777
 
 POST http://localhost:8080/item/update
 Content-Type: application/json
 
 {
-  "itemId": 38,
-  "count": 7,
-  "price": 10,
-  "productOwnerId": 83
+  "itemId": 75,
+  "count": 2000
 }
 
-###
+###8888
+
+POST http://localhost:8080/item/withdraw
+Content-Type: application/json
+
+{
+	"itemList": [
+	{
+		"itemId": 38,
+		"count": 10000000,
+		"productOwnerId": 84
+	},
+      {
+        "itemId": 64,
+        "count": 0,
+        "productOwnerId": 84
+      }
+     ]
+}
+
+###9999
 
 POST http://localhost:8080/item/totalStatistic
 Content-Type: application/json
 
 {
   "period": "CURRENT_DAY",
-  "typeOperation": "UPDATE"
+  "typeOperation": "ADD"
 }
 
 
-
+###10
+GET http://localhost:8080/item/topStatistic
 ###
-
-#+ add new product owner
-#• remove product owner (only product owners without any item currently
-#stored at warehouse could be removed
-#• store new item (items could be stored only for already known product
-#owners)
-#• withdraw item from warehouse (it is common situation with withdrawing
-#several different items for one product owner at once)
-#• provide list of all items for given product owner
-
-• prove list of active product owners
-
-• provide statistic information about amount and total cost of items stored
-and withdrawn for the last day/month
-
-• provide statistic information about active product owners: list of top 5
-product owners according to the total cost of items currently stored at warehouse, sorted by total price, starting with the biggest one

@@ -1,4 +1,4 @@
-package ua.graduation.warehouse.service.validator;
+package ua.graduation.warehouse.controller.validator;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -18,7 +18,6 @@ public class ProductOwnerValidator implements Validator {
         ProductOwner productOwner = (ProductOwner) target;
         setErrorsValidator("firstName", productOwner.getFirstName(), errors);
         setErrorsValidator("lastName", productOwner.getLastName(), errors);
-
     }
 
     private void setErrorsValidator(String nameField, String value, Errors errors) {

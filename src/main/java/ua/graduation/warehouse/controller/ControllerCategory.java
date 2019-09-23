@@ -1,7 +1,6 @@
 package ua.graduation.warehouse.controller;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import javax.validation.Valid;
 public class ControllerCategory {
 
     private final CategoryService categoryService;
+    private final ControllerResponseEntity controllerResponseEntity;
 
-    public ControllerCategory(CategoryService categoryService) {
+    public ControllerCategory(CategoryService categoryService,
+                              ControllerResponseEntity controllerResponseEntity) {
+        this.controllerResponseEntity = controllerResponseEntity;
         this.categoryService = categoryService;
     }
 
@@ -26,11 +28,6 @@ public class ControllerCategory {
     @ResponseBody
     public ResponseEntity createProductOwner(@Valid @RequestBody Category category) {
         categoryService.addCategory(category);
-
-        ResponseEntity responseEntity = ResponseEntity
-                .status(HttpStatus.OK)
-                .body("succsesfiull");
-
-        return responseEntity;
+        return controllerResponseEntity.getResponseEntityStatusHttpStatusOk();
     }
 }

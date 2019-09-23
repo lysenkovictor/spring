@@ -1,6 +1,7 @@
 package ua.graduation.warehouse.service.entity.request;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +18,13 @@ import java.util.Optional;
 public class ProductOwner {
 
     private int idProductOwner;
-
-    @NotBlank(message = "can't be null")
     private String firstName;
     private String lastName;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Optional<String> companyName;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Contacts contacts;
 
 }

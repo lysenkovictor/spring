@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ProductOwnerRepository;
 import ua.graduation.warehouse.repository.model.ProductOwnerEntity;
+import ua.graduation.warehouse.service.entity.request.ProductOwner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -36,6 +37,5 @@ public class ProductOwnerRepositoryImpl implements ProductOwnerRepository {
         query.setParameter("idProduct", idProduct);
         return query.executeUpdate();
     }
-
 
 }

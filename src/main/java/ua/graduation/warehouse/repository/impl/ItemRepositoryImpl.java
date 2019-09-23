@@ -1,5 +1,4 @@
 package ua.graduation.warehouse.repository.impl;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         entityManager.persist(itemEntity);
     }
 
-
+    @Override
     @Transactional
     public void updateItem(ItemEntity itemEntity) {
 
@@ -39,18 +38,25 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .setParameter("id",itemEntity.getId());
 
         query.executeUpdate();
+
         entityManager.persist(itemEntity.getOperationEntities().iterator().next());
     }
 
 
-    public List<ItemEntity> getAllOwnerItemsBy2(int idProductOwner) {
-        Query query = entityManager.createQuery(
-                "SELECT i FROM ItemEntity i " +
-                        "JOIN i.productOwnerEntity as pOwn " +
-                        "WHERE pOwn.idProductOwner =: id");
-        query.setParameter("id", idProductOwner);
+    @Override
+    @Transactional
+    public void updateItem(List<ItemEntity> itemEntity) {
 
-        return query.getResultList();
+        String item = "UPDATE ItemEntity i set i.count=:count where id=:id";
+
+        for (ItemEntity i: itemEntity) {
+            entityManager.createQuery(item)
+                    .setParameter("count", i.getCount())
+                    .setParameter("id", i.getId())
+                    .executeUpdate();
+
+            entityManager.persist(i.getOperationEntities().iterator().next());
+        }
     }
 
     @Override
@@ -61,6 +67,20 @@ public class ItemRepositoryImpl implements ItemRepository {
                         "LEFT JOIN FETCH i.categories as c " +
                         "WHERE own.idProductOwner =: id");
         query.setParameter("id", idProductOwner);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ItemEntity> getItemBy(int idItem) {
+        return entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id =: id", ItemEntity.class)
+                .setParameter("id",idItem).getResultList();
+    }
+
+    @Override
+    public List<ItemEntity> getListItemBy(List<Integer> idItem) {
+        Query query =entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id IN (:listId)")
+                .setParameter("listId",idItem);
 
         return query.getResultList();
     }
@@ -77,23 +97,14 @@ public class ItemRepositoryImpl implements ItemRepository {
         return query.getResultList();
     }
 
-//
-//
-//    select  *  from service.t_item as i
-//    inner JOIN service.t_operation as o
-//    on i.id = o.item_id
-//    where o.type_operation_id = '2' and
-//    date_operation between '2019-09-15 00:00' and '2019-09-15 23:59:59.999999999'
 
-
-
-
-//    select  *  from service.t_item as i
-//    inner JOIN service.t_operation as o
-//    on i.id = o.item_id
-//    inner JOIN service.t_type_operation as tOp
-//    on o.type_operation_id = tOp.id
-//    where tOp.id = '2' and date_operation between '2019-09-15 00:00' and '2019-09-15 23:59:59.999999999'
+    @Override
+    public List<ItemEntity> getAllItems() {
+        Query query = entityManager.createQuery(
+                "SELECT i FROM ItemEntity i " +
+                        "JOIN i.productOwnerEntity as own ");
+        return query.getResultList();
+    }
 
 
 }

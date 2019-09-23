@@ -3,7 +3,7 @@ package ua.graduation.warehouse.service;
 public enum  TypeOperation {
 
     ADD(1),
-    UPDATE(2);
+    WITHDRAW(2);
 
     private int typeId;
 
