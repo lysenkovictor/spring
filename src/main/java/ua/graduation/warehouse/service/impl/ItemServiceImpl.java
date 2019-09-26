@@ -16,10 +16,9 @@ import ua.graduation.warehouse.service.entity.response.ItemResponse;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
 import ua.graduation.warehouse.service.impl.exeption.FilterNotSupportedException;
 import ua.graduation.warehouse.service.impl.validation.ItemValidation;
+import ua.graduation.warehouse.utils.FormatterDate;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,12 +33,14 @@ public class ItemServiceImpl implements ItemService {
     public final ItemRepository itemRepository;
     public final ItemValidation itemValidation;
 
-    @Value( "${item.top.owner}" )
-    public int countTopProductOwnerLimit;
 
-    public ItemServiceImpl(ItemRepository itemRepository, ItemValidation itemValidation) {
+    public final int showTopOwner;
+
+    public ItemServiceImpl(ItemRepository itemRepository, ItemValidation itemValidation,
+                           @Value("${item.top.owner}") int showTopOwner) {
         this.itemRepository = itemRepository;
         this.itemValidation = itemValidation;
+        this.showTopOwner = showTopOwner;
     }
 
     @Override
@@ -120,49 +121,50 @@ public class ItemServiceImpl implements ItemService {
     public StatisticInfoResponse getStatisticInformationAboutAmountAndTotalCostItems(ItemStatisticInfo itemStatisticInfo) {
         TypeOperation typeOperation = TypeOperation.valueOf(itemStatisticInfo.getTypeOperation());
         FilterBetweenDate filterBetweenDate;
-        List<ItemEntity> itemEntityList;
+        List<OperationEntity> itemEntityList;
 
         if (itemStatisticInfo.getDateFrom() != null && itemStatisticInfo.getDateTo() != null) {
          filterBetweenDate =  FilterBetweenDate.builder()
-                    .dateStringFrom(String.valueOf(itemStatisticInfo.getDateFrom()))
-                    .dateStringTo(String.valueOf(itemStatisticInfo.getDateTo())).build();
-            itemEntityList = itemRepository.getItemByTypeAndDateOperation(typeOperation,filterBetweenDate);
+                    .dateStringFrom(FormatterDate.getDateMinFormatter(itemStatisticInfo.getDateFrom()))
+                    .dateStringTo(FormatterDate.getDateMinFormatter(itemStatisticInfo.getDateFrom())).build();
+            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation,filterBetweenDate);
         }else if (itemStatisticInfo.getPeriod() != null) {
             filterBetweenDate = FilterDate.valueOf(itemStatisticInfo.getPeriod()).getPeriod();
-            itemEntityList = itemRepository.getItemByTypeAndDateOperation(typeOperation,filterBetweenDate);
+            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation,filterBetweenDate);
         }else {
             throw new FilterNotSupportedException("Filter not supported - you should set period or by date filter");
         }
 
-        return  getCountStatistics(itemEntityList);
+        return  getCountStatisticsOperation(itemEntityList);
+    }
+
+    @Override
+    public List<StatisticInfoResponse> getTotalCostItemsTopProductOwner() {
+        List<ItemEntity> itemEntities = itemRepository.getAllItems();
+
+        Map<Integer, List<ItemEntity>> map = itemEntities.stream()
+                .collect(groupingBy(el -> el.getProductOwnerEntity().getIdProductOwner()));
+
+        List<StatisticInfoResponse> listStatistic = new ArrayList<>();
+        for (Map.Entry<Integer, List<ItemEntity>> item : map.entrySet()) {
+            ProductOwnerEntity productOwnerEntity = item.getValue().get(0).getProductOwnerEntity();
+            ProductOwner productOwner = ProductOwner.builder()
+                    .companyName(Optional.ofNullable(productOwnerEntity.getCompanyName()))
+                    .firstName(productOwnerEntity.getFirstName())
+                    .lastName(productOwnerEntity.getLastName())
+                    .idProductOwner(productOwnerEntity.getIdProductOwner())
+                    .build();
+
+            StatisticInfoResponse statisticInfoResponse = getCountStatistics(item.getValue());
+            statisticInfoResponse.setProductOwner(productOwner);
+            listStatistic.add(statisticInfoResponse);
+        }
+        listStatistic.sort(Comparator.comparing(StatisticInfoResponse::getTotalCost, Comparator.reverseOrder()));
+        return listStatistic.stream().limit(showTopOwner).collect(Collectors.toList());
+
     }
 
     private ItemEntity getFormItemEntity(Item item, TypeOperation typeOperation) {
-        LocalDateTime dateOperation =  LocalDateTime.now();
-
-        OperationEntity operationEntity = OperationEntity.builder()
-                .price(item.getPrice())
-                .count(item.getCount())
-                .dateOperation(dateOperation)
-                .typeOperationEntity(TypeOperationEntity.builder().id(typeOperation.getTypeId()).build())
-                .build();
-
-        ItemEntity itemEntity =  ItemEntity.builder()
-                .productOwnerEntity(ProductOwnerEntity.builder().idProductOwner(item.getProductOwnerId()).build())
-                .count(item.getCount())
-                .id(item.getItemId())
-                .dateAdd(LocalDateTime.now())
-                .price(item.getPrice())
-                .title(item.getTitle())
-                .operationEntities(Collections.singletonList(operationEntity))
-                .build();
-
-        operationEntity.setItemEntity(itemEntity);
-
-        return itemEntity;
-    }
-
-    private ItemEntity getFormItemEntity2(Item item, TypeOperation typeOperation) {
         OperationEntity operationEntity = getFormOperationEntity(item, typeOperation);
         ItemEntity itemEntity = getFormItemEntity(item);
 
@@ -172,10 +174,8 @@ public class ItemServiceImpl implements ItemService {
         return itemEntity;
     }
 
-
     private OperationEntity getFormOperationEntity(Item item, TypeOperation typeOperation) {
         LocalDateTime dateOperation =  LocalDateTime.now();
-
         return OperationEntity.builder()
                 .price(item.getPrice())
                 .count(item.getCount())
@@ -203,47 +203,36 @@ public class ItemServiceImpl implements ItemService {
     private StatisticInfoResponse getCountStatistics(List<ItemEntity> itemEntityList) {
         BigDecimal totalCost = BigDecimal.ZERO;
         int totalCount = 0;
-        MathContext mathContext = new MathContext(4, RoundingMode.HALF_UP);
 
         for (ItemEntity item : itemEntityList) {
-            if (item.getCount()>0) {
-                totalCost = totalCost.add(item.getPrice().multiply(BigDecimal.valueOf(item.getCount()), mathContext));
+            if (item.getCount() > 0 && item.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal costItem = item.getPrice().multiply(BigDecimal.valueOf(item.getCount()));
+                totalCost = totalCost.add(costItem);
                 totalCount += item.getCount();
             }
         }
 
         return StatisticInfoResponse.builder()
-                .amount(totalCount)
+                .totalCount(totalCount)
                 .totalCost(totalCost)
                 .build();
     }
 
-    @Override
-    public List<StatisticInfoResponse> getTotalCostItemsTopProductOwner() {
-        List<ItemEntity> itemEntities = itemRepository.getAllItems();
+    private StatisticInfoResponse getCountStatisticsOperation(List<OperationEntity> operationEntities) {
+        BigDecimal totalCost = BigDecimal.ZERO;
+        int totalCount = 0;
 
-        Map<Integer, List<ItemEntity>> map = itemEntities.stream()
-                .collect(groupingBy(el -> el.getProductOwnerEntity().getIdProductOwner()));
-
-        List<StatisticInfoResponse> listStatistic = new ArrayList<>();
-        for (Map.Entry<Integer, List<ItemEntity>> item : map.entrySet()) {
-            ProductOwnerEntity productOwnerEntity = item.getValue().get(0).getProductOwnerEntity();
-            ProductOwner productOwner = ProductOwner.builder()
-                    .companyName(Optional.of(productOwnerEntity.getCompanyName()))
-                    .firstName(productOwnerEntity.getFirstName())
-                    .lastName(productOwnerEntity.getLastName())
-                    .idProductOwner(productOwnerEntity.getIdProductOwner())
-                    .build();
-
-            StatisticInfoResponse statisticInfoResponse = getCountStatistics(item.getValue());
-            statisticInfoResponse.setProductOwner(productOwner);
-            listStatistic.add(statisticInfoResponse);
+        for (OperationEntity item : operationEntities) {
+            if (item.getCount() > 0 && item.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal costItem = item.getPrice().multiply(BigDecimal.valueOf(item.getCount()));
+                totalCost = totalCost.add(costItem);
+                totalCount += item.getCount();
+            }
         }
-        listStatistic.sort(Comparator.comparing(StatisticInfoResponse::getTotalCost, Comparator.reverseOrder()));
-
-        return listStatistic.stream().limit(countTopProductOwnerLimit).collect(Collectors.toList());
-
+        return StatisticInfoResponse.builder()
+                .totalCount(totalCount)
+                .totalCost(totalCost)
+                .build();
     }
-
 
 }

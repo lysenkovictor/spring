@@ -1,6 +1,7 @@
 package ua.graduation.warehouse.repository;
 
 import ua.graduation.warehouse.repository.model.ItemEntity;
+import ua.graduation.warehouse.repository.model.OperationEntity;
 import ua.graduation.warehouse.service.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 import java.util.List;
@@ -12,7 +13,8 @@ public interface ItemRepository {
     List<ItemEntity> getAllOwnerItemsBy(int idProductOwner);
     List<ItemEntity> getItemBy(int idItem);
     List<ItemEntity> getListItemBy(List<Integer> idItem);
-    List<ItemEntity> getItemByTypeAndDateOperation(TypeOperation typeOperation, FilterBetweenDate filterBetweenDate);
+    List<OperationEntity> getAllOperationByTypeAndDateOperation(TypeOperation typeOperation, FilterBetweenDate filterBetweenDate);
     List<ItemEntity> getAllItems();
+
 
 }

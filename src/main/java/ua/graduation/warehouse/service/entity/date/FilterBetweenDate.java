@@ -3,11 +3,13 @@ package ua.graduation.warehouse.service.entity.date;
 import lombok.Builder;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @ToString
 @Builder
 public class FilterBetweenDate {
-   public String dateStringFrom;
-   public String dateStringTo;
+   public LocalDateTime dateStringFrom;
+   public LocalDateTime dateStringTo;
 
 
 

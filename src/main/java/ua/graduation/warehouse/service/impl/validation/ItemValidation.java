@@ -16,7 +16,7 @@ public class ItemValidation {
     public void checkCountItemForWithdraw(int currentCount, int withdrawCount, int idItem) {
         if (currentCount < withdrawCount) {
             throw new WithdrawalAmountExceededException(
-                    String.format("%s - withdrawal amount exceeded, currentCount = %s, withdrawCount = %s",
+                    String.format("%s - withdrawal totalCount exceeded, currentCount = %s, withdrawCount = %s",
                             idItem, currentCount, withdrawCount));
         }
     }

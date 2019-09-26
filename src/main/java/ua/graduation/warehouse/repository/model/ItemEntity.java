@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "t_item")
 public class ItemEntity {
 
@@ -51,6 +52,6 @@ public class ItemEntity {
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy="itemEntity")
-    private Collection<OperationEntity> operationEntities;
+    private List<OperationEntity> operationEntities;
 
 }

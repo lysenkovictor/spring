@@ -1,10 +1,7 @@
 package ua.graduation.warehouse.service.entity.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ua.graduation.warehouse.service.entity.request.ProductOwner;
 
 import java.math.BigDecimal;
@@ -13,10 +10,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Data
 @Builder
+@EqualsAndHashCode
 public class StatisticInfoResponse {
 
     private BigDecimal totalCost;
-    private int amount;
+    private int totalCount;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String typeOperation;

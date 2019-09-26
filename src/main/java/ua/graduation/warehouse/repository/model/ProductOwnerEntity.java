@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "t_product_owner")
+@ToString
 public class ProductOwnerEntity {
 
     @Id

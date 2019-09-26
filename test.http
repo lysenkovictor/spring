@@ -74,7 +74,7 @@ Content-Type: application/json
 	"itemList": [
 	{
 		"itemId": 38,
-		"count": 10000000,
+		"count": 0,
 		"productOwnerId": 84
 	},
       {
@@ -91,7 +91,7 @@ POST http://localhost:8080/item/totalStatistic
 Content-Type: application/json
 
 {
-  "period": "CURRENT_DAY",
+  "period": "LAST_DAY",
   "typeOperation": "ADD"
 }
 

@@ -1,9 +1,11 @@
 package ua.graduation.warehouse.repository.impl;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
+import ua.graduation.warehouse.repository.model.OperationEntity;
 import ua.graduation.warehouse.service.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 
@@ -35,13 +37,12 @@ public class ItemRepositoryImpl implements ItemRepository {
         String item = "UPDATE ItemEntity i set i.count=:count where id=:id";
         Query query = entityManager.createQuery(item);
         query.setParameter("count", itemEntity.getCount())
-                .setParameter("id",itemEntity.getId());
+                .setParameter("id", itemEntity.getId());
 
         query.executeUpdate();
 
         entityManager.persist(itemEntity.getOperationEntities().iterator().next());
     }
-
 
     @Override
     @Transactional
@@ -49,7 +50,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         String item = "UPDATE ItemEntity i set i.count=:count where id=:id";
 
-        for (ItemEntity i: itemEntity) {
+        for (ItemEntity i : itemEntity) {
             entityManager.createQuery(item)
                     .setParameter("count", i.getCount())
                     .setParameter("id", i.getId())
@@ -74,29 +75,29 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<ItemEntity> getItemBy(int idItem) {
         return entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id =: id", ItemEntity.class)
-                .setParameter("id",idItem).getResultList();
+                .setParameter("id", idItem).getResultList();
     }
 
     @Override
     public List<ItemEntity> getListItemBy(List<Integer> idItem) {
-        Query query =entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id IN (:listId)")
-                .setParameter("listId",idItem);
+        Query query = entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id IN (:listId)")
+                .setParameter("listId", idItem);
 
         return query.getResultList();
     }
 
     @Override
-    public List<ItemEntity> getItemByTypeAndDateOperation(TypeOperation typeOperation, FilterBetweenDate filterBetweenDate) {
+    public List<OperationEntity> getAllOperationByTypeAndDateOperation(TypeOperation typeOperation, FilterBetweenDate filterBetweenDate) {
         Query query = entityManager.createQuery(
-                "SELECT i FROM ItemEntity i " +
-                "JOIN i.operationEntities as op " +
-                "JOIN op.typeOperationEntity as t_op " +
-                "wHERE t_op.id =: typeOperationId");
-        query.setParameter("typeOperationId", typeOperation.getTypeId());
+                "SELECT op FROM OperationEntity as op " +
+                        "JOIN op.typeOperationEntity as t_op " +
+                        "WHERE t_op.id =: typeOperationId AND op.dateOperation BETWEEN :dateFrom AND :dateTo");
+        query.setParameter("typeOperationId", typeOperation.getTypeId())
+                .setParameter("dateFrom", filterBetweenDate.dateStringFrom)
+                .setParameter("dateTo", filterBetweenDate.dateStringTo);
 
         return query.getResultList();
     }
-
 
     @Override
     public List<ItemEntity> getAllItems() {
@@ -105,6 +106,5 @@ public class ItemRepositoryImpl implements ItemRepository {
                         "JOIN i.productOwnerEntity as own ");
         return query.getResultList();
     }
-
 
 }
