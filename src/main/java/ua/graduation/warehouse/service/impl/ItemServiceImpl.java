@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.*;
 import ua.graduation.warehouse.service.ItemService;
-import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.catalog.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 import ua.graduation.warehouse.service.entity.date.FilterDate;
 import ua.graduation.warehouse.service.entity.request.Category;
@@ -119,23 +119,28 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public StatisticInfoResponse getStatisticInformationAboutAmountAndTotalCostItems(ItemStatisticInfo itemStatisticInfo) {
-        TypeOperation typeOperation = TypeOperation.valueOf(itemStatisticInfo.getTypeOperation());
+
+        itemValidation.checkExistTypeOperation(itemStatisticInfo.getTypeOperation());
+        TypeOperation typeOperation = TypeOperation.valueOf(itemStatisticInfo.getTypeOperation().toUpperCase());
+
         FilterBetweenDate filterBetweenDate;
         List<OperationEntity> itemEntityList;
 
         if (itemStatisticInfo.getDateFrom() != null && itemStatisticInfo.getDateTo() != null) {
-         filterBetweenDate =  FilterBetweenDate.builder()
+            filterBetweenDate = FilterBetweenDate.builder()
                     .dateStringFrom(FormatterDate.getDateMinFormatter(itemStatisticInfo.getDateFrom()))
                     .dateStringTo(FormatterDate.getDateMinFormatter(itemStatisticInfo.getDateFrom())).build();
-            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation,filterBetweenDate);
-        }else if (itemStatisticInfo.getPeriod() != null) {
-            filterBetweenDate = FilterDate.valueOf(itemStatisticInfo.getPeriod()).getPeriod();
-            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation,filterBetweenDate);
-        }else {
+            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation, filterBetweenDate);
+
+        } else if (itemStatisticInfo.getPeriod() != null) {
+            itemValidation.checkExistTypePeriod(itemStatisticInfo.getPeriod());
+            filterBetweenDate = FilterDate.valueOf(itemStatisticInfo.getPeriod().toUpperCase()).getPeriod();
+            itemEntityList = itemRepository.getAllOperationByTypeAndDateOperation(typeOperation, filterBetweenDate);
+        } else {
             throw new FilterNotSupportedException("Filter not supported - you should set period or by date filter");
         }
 
-        return  getCountStatisticsOperation(itemEntityList);
+        return getCountStatisticsOperation(itemEntityList);
     }
 
     @Override

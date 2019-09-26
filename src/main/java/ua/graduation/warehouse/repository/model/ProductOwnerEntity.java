@@ -38,7 +38,7 @@ public class ProductOwnerEntity {
     private List<EmailEntity> emailEntities;
 
     @OneToMany(mappedBy = "productOwnerEntity", cascade = CascadeType.ALL)
-    private Set<PhoneEntity> phoneEntities;
+    private List<PhoneEntity> phoneEntities;
 
 
 }

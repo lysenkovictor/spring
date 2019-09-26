@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
 import ua.graduation.warehouse.repository.model.OperationEntity;
-import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.catalog.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 
 
@@ -25,7 +25,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void addItem(ItemEntity itemEntity) {
         entityManager.persist(itemEntity);
     }
@@ -55,7 +55,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                     .setParameter("count", i.getCount())
                     .setParameter("id", i.getId())
                     .executeUpdate();
-
             entityManager.persist(i.getOperationEntities().iterator().next());
         }
     }
@@ -70,6 +69,18 @@ public class ItemRepositoryImpl implements ItemRepository {
         query.setParameter("id", idProductOwner);
 
         return query.getResultList();
+    }
+
+    @Override
+    public List<ItemEntity> getOneEntityOwnersBy(int idProductOwner) {
+        Query query = entityManager.createQuery(
+                "SELECT i FROM ItemEntity i " +
+                        "JOIN i.productOwnerEntity as own " +
+                        "WHERE own.idProductOwner =: id");
+        query.setParameter("id", idProductOwner);
+
+        return query.setMaxResults(1)
+                .getResultList();
     }
 
     @Override

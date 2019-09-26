@@ -21,8 +21,8 @@ public enum FilterDate {
     LAST_DAY {
         public FilterBetweenDate getPeriod() {
             return   FilterBetweenDate.builder()
-                    .dateStringFrom(FormatterDate.getDateMinFormatter(LocalDate.now().minusDays(2)))
-                    .dateStringTo(FormatterDate.getDateMaxFormatter(LocalDate.now().minusDays(2)))
+                    .dateStringFrom(FormatterDate.getDateMinFormatter(LocalDate.now().minusDays(1)))
+                    .dateStringTo(FormatterDate.getDateMaxFormatter(LocalDate.now().minusDays(1)))
                     .build();
         }
     },

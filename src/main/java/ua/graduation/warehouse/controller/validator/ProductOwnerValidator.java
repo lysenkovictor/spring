@@ -18,6 +18,11 @@ public class ProductOwnerValidator implements Validator {
         ProductOwner productOwner = (ProductOwner) target;
         setErrorsValidator("firstName", productOwner.getFirstName(), errors);
         setErrorsValidator("lastName", productOwner.getLastName(), errors);
+
+        if (productOwner.getContacts() == null) {
+            String contacts = "contacts";
+            errors.rejectValue(contacts, "", getMassage(contacts));
+        }
     }
 
     private void setErrorsValidator(String nameField, String value, Errors errors) {
@@ -26,4 +31,9 @@ public class ProductOwnerValidator implements Validator {
             errors.rejectValue(nameField, "", errorMessage);
         }
     }
+
+    public String getMassage(String nameField) {
+        return String.format("%s can't be null", nameField);
+    }
+
 }

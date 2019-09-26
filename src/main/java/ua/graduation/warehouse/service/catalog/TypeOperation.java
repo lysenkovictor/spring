@@ -1,4 +1,4 @@
-package ua.graduation.warehouse.service;
+package ua.graduation.warehouse.service.catalog;
 
 public enum  TypeOperation {
 

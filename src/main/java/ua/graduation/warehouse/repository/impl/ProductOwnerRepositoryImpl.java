@@ -25,13 +25,12 @@ public class ProductOwnerRepositoryImpl implements ProductOwnerRepository {
     @Override
     @Transactional
     public int addProductOwner(ProductOwnerEntity productOwnerEntity) {
-
-
         entityManager.persist(productOwnerEntity);
         return productOwnerEntity.getIdProductOwner();
     }
 
     @Override
+    @Transactional
     public int removeProductOwner(int idProduct) {
         Query query = entityManager.createQuery("DELETE ProductOwnerEntity p WHERE p.id =:idProduct");
         query.setParameter("idProduct", idProduct);

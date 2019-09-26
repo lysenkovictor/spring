@@ -8,7 +8,7 @@ import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
 import ua.graduation.warehouse.repository.model.OperationEntity;
 import ua.graduation.warehouse.repository.model.ProductOwnerEntity;
-import ua.graduation.warehouse.service.TypeOperation;
+import ua.graduation.warehouse.service.catalog.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 import ua.graduation.warehouse.service.entity.request.ItemStatisticInfo;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
@@ -37,7 +37,7 @@ public class StatisticTest {
 
 
     @Test
-    @DisplayName("check total statistic when operation operation = 1")
+    @DisplayName("check total statistic when operation = 1")
     public void testCase1GetStatisticInformationAboutAmountAndTotalCostItem() {
         //Given
         List<OperationEntity> operationEntityList = Collections.singletonList(OperationEntity.builder()
@@ -66,7 +66,7 @@ public class StatisticTest {
 
 
     @Test
-    @DisplayName("check total statistic operation when operation > 1")
+    @DisplayName("check total statistic when operation > 1")
     public void testCase2GetStatisticInformationAboutAmountAndTotalCostItem() {
         //Given
         ItemStatisticInfo itemStatisticInfo = getAnyItemStatisticInfo();
@@ -97,7 +97,7 @@ public class StatisticTest {
         when(itemRepository.getAllOperationByTypeAndDateOperation(
                 any(TypeOperation.class),
                 any(FilterBetweenDate.class)))
-                .thenReturn(asList());
+                .thenReturn(Collections.emptyList());
 
         StatisticInfoResponse expectedResult =
                 StatisticInfoResponse.builder().totalCount(0).totalCost(BigDecimal.ZERO).build();
@@ -152,17 +152,16 @@ public class StatisticTest {
         //Given
         when(itemRepository.getAllItems()).thenReturn(getListItemProductOwner());
 
-
         //When
         List<StatisticInfoResponse> infoResponse
                 = itemService.getTotalCostItemsTopProductOwner();
 
-        infoResponse.stream().forEach(el-> System.out.println(el.getTotalCost()));
         //Then
 
-        assertThat(infoResponse).extracting(StatisticInfoResponse::getTotalCost)
-                .describedAs("should be sort by descending");
+        infoResponse.stream().forEach(el-> System.out.println(el));
+
     }
+
 
     public ItemStatisticInfo getAnyItemStatisticInfo() {
         return ItemStatisticInfo.builder()
@@ -249,12 +248,13 @@ public class StatisticTest {
     }
 
 
-    public ItemEntity getItemEntity(BigDecimal price, int count, ProductOwnerEntity productOwnerEntity) {
+    private ItemEntity getItemEntity(BigDecimal price, int count, ProductOwnerEntity productOwnerEntity) {
         return ItemEntity.builder()
                 .count(count)
                 .price(price)
                 .productOwnerEntity(productOwnerEntity)
                 .build();
     }
+
 
 }
