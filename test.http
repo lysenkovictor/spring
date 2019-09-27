@@ -6,6 +6,7 @@
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
 
+
 ###11111
 
 POST http://localhost:8080/owner/add
@@ -21,9 +22,37 @@ Content-Type: application/json
       {
         "phone": "55555555532",
         "typeContact": "Work"
+      }
+    ],
+    "emails": [
+      {
+        "email": "viktorlsn@gmail.com",
+        "typeContact": "Work"
       },
       {
-        "phone": "1234455",
+        "email": "viktorlsn@gmail.com",
+        "typeContact": "Work"
+      }
+    ]
+  }
+}
+
+###22222
+
+###11111
+
+POST http://localhost:8080/owner/add
+Content-Type: application/json
+
+
+{
+  "companyName":"тест3",
+  "firstName": "test3",
+  "lastName": "test3",
+  "contacts": {
+    "emails": [
+      {
+        "email": "55555555532",
         "typeContact": "Work"
       }
     ]

@@ -1,20 +1,16 @@
 package ua.graduation.warehouse.repository.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
 @Builder
 @Entity
 @Table(name = "t_phone")
 public class PhoneEntity {
-
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -25,6 +25,8 @@ public class ProductOwnerRepositoryImpl implements ProductOwnerRepository {
     @Override
     @Transactional
     public int addProductOwner(ProductOwnerEntity productOwnerEntity) {
+        System.out.println(productOwnerEntity);
+
         entityManager.persist(productOwnerEntity);
         return productOwnerEntity.getIdProductOwner();
     }

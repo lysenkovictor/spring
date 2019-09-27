@@ -34,7 +34,7 @@ public class ProductOwnerEntity {
     @OneToMany(mappedBy = "productOwnerEntity")
     private Set<ItemEntity> itemEntities;
 
-    @OneToMany(mappedBy = "productOwnerEntity")
+    @OneToMany(mappedBy = "productOwnerEntity", cascade = CascadeType.ALL)
     private List<EmailEntity> emailEntities;
 
     @OneToMany(mappedBy = "productOwnerEntity", cascade = CascadeType.ALL)

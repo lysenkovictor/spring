@@ -183,65 +183,33 @@ public class StatisticTest {
     }
 
     private List<ItemEntity> getListItemProductOwner() {
-       ProductOwnerEntity productOwner = ProductOwnerEntity.builder()
-               .idProductOwner(1)
-                .lastName("First")
-                .firstName("First")
-                .companyName("test").build();
 
-        ProductOwnerEntity productOwner2 = ProductOwnerEntity.builder()
-                .idProductOwner(2)
-                .lastName("Second")
-                .firstName("Second")
-                .companyName("").build();
-
-        ProductOwnerEntity productOwner3 = ProductOwnerEntity.builder()
-                .idProductOwner(3)
-                .lastName("Fourth")
-                .firstName("Fourth")
-                .build();
-
-        ProductOwnerEntity productOwner4 = ProductOwnerEntity.builder()
-                .idProductOwner(4)
-                .lastName("Fifth")
-                .firstName("Fifth")
-                .build();
-
-        ProductOwnerEntity productOwner5 = ProductOwnerEntity.builder()
-                .idProductOwner(5)
-                .lastName("Third")
-                .firstName("Third")
-                .build();
-
-        ProductOwnerEntity productOwner6 = ProductOwnerEntity.builder()
-                .idProductOwner(6)
-                .lastName("Sixth")
-                .firstName("Sixth")
-                .build();
+        ArrayList<ProductOwnerEntity>  productOwnerEntities = getListProductOwner(6);
 
         ArrayList<ItemEntity> itemEntities = new ArrayList<>();
 
         // (0,75   * 15 ) + (5000 * 1) = 5011.25
-        itemEntities.add(getItemEntity(new BigDecimal("0.75"), 15, productOwner));
-        itemEntities.add(getItemEntity(new BigDecimal("1"), 5000, productOwner));
+        //У клиента 2
+        itemEntities.add(getItemEntity(new BigDecimal("0.75"), 15, productOwnerEntities.get(0)));
+        itemEntities.add(getItemEntity(new BigDecimal("1"), 5000, productOwnerEntities.get(0)));
 
         //Исключаем (количество элементов 0)
         // (15 * 1000) = 15000
-        itemEntities.add(getItemEntity(new BigDecimal("15"), 1000, productOwner2));
-        itemEntities.add(getItemEntity(new BigDecimal("1000"), 0, productOwner2));
+        itemEntities.add(getItemEntity(new BigDecimal("15"), 1000, productOwnerEntities.get(1)));
+        itemEntities.add(getItemEntity(new BigDecimal("1000"), 0, productOwnerEntities.get(1)));
 
         // (99999.99 * 9) = 899999.91
-        itemEntities.add(getItemEntity(new BigDecimal("99999.99"), 9, productOwner3));
-
-        // 455.5
-        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 10, productOwner4));
+        itemEntities.add(getItemEntity(new BigDecimal("99999.99"), 9, productOwnerEntities.get(2)));
 
         //455.5
-        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 5, productOwner5));
-        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 5, productOwner5));
+        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 10, productOwnerEntities.get(3)));
+
+        //455.5
+        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 5, productOwnerEntities.get(4)));
+        itemEntities.add(getItemEntity(new BigDecimal("45.55"), 5, productOwnerEntities.get(4)));
 
         //9
-        itemEntities.add(getItemEntity(new BigDecimal("3"), 3, productOwner6));
+        itemEntities.add(getItemEntity(new BigDecimal("3"), 3, productOwnerEntities.get(5)));
 
 
         return itemEntities;
@@ -257,4 +225,22 @@ public class StatisticTest {
     }
 
 
+
+    public ArrayList<ProductOwnerEntity> getListProductOwner (int countOwnrs) {
+        ArrayList<ProductOwnerEntity> productOwnerEntities = new ArrayList();
+
+        for (int i = 1; i <= countOwnrs; i++) {
+            ProductOwnerEntity productOwner = ProductOwnerEntity.builder()
+                    .idProductOwner(i)
+                    .lastName("lastName " + i)
+                    .firstName("firstName " + i)
+                    .companyName("test")
+                    .build();
+
+            productOwnerEntities.add(productOwner);
+        }
+
+        return productOwnerEntities;
+
+    }
 }

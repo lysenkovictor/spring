@@ -45,20 +45,22 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
 
         productOwnerValidation.checkContactExist(productOwner.getContacts());
 
-        if (contacts.getEmails() != null)
-            emailEntities = getEmailEntity(contacts.getEmails());
-        if (contacts.getPhones() != null)
-            phoneEntities = getPhoneEntity(contacts.getPhones());
-
-                ProductOwnerEntity productOwnerEntity =   ProductOwnerEntity.builder()
+        ProductOwnerEntity productOwnerEntity =   ProductOwnerEntity.builder()
                 .companyName(productOwner.getCompanyName().orElse(null))
                 .firstName(productOwner.getFirstName())
                 .lastName(productOwner.getLastName())
-                .phoneEntities(phoneEntities)
-                .emailEntities(emailEntities)
                 .build();
 
-       return productOwnerRepository.addProductOwner(productOwnerEntity);
+        if (contacts.getEmails() != null)
+            emailEntities = getEmailEntity(contacts.getEmails(), productOwnerEntity);
+        if (contacts.getPhones() != null)
+            phoneEntities = getPhoneEntity(contacts.getPhones(), productOwnerEntity);
+
+        productOwnerEntity.setPhoneEntities(phoneEntities);
+        productOwnerEntity.setEmailEntities(emailEntities);
+
+
+        return productOwnerRepository.addProductOwner(productOwnerEntity);
     }
 
     @Override
@@ -71,22 +73,24 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
             throw new NotFoundOwner(String.format("not found owner id = %s", idProductOwner));
     }
 
-    private List<EmailEntity> getEmailEntity(List<Email> emails) {
+    private List<EmailEntity> getEmailEntity(List<Email> emails, ProductOwnerEntity productOwnerEntity) {
         return  emails.stream()
                 .map(email -> EmailEntity
                         .builder()
                         .email(email.getEmail())
                         .typeContactEntity(getTypeContactEntity(email.getTypeContact()))
+                        .productOwnerEntity(productOwnerEntity)
                         .build())
                 .collect(Collectors.toList());
     }
 
-    private List<PhoneEntity> getPhoneEntity(List<Phone> phones) {
+    private List<PhoneEntity> getPhoneEntity(List<Phone> phones, ProductOwnerEntity productOwnerEntity) {
         return  phones.stream()
                 .map(p -> PhoneEntity
                         .builder()
                         .phone(p.getPhone())
                         .typeContactEntity(getTypeContactEntity(p.getTypeContact()))
+                        .productOwnerEntity(productOwnerEntity)
                         .build())
                 .collect(Collectors.toList());
     }

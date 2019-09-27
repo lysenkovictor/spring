@@ -2,13 +2,14 @@ package ua.graduation.warehouse.repository.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "t_type_contact")
-@Data
+@Value
 @Builder
 public class TypeContactEntity {
 
@@ -19,7 +20,7 @@ public class TypeContactEntity {
     @Column(name = "type")
     private String type;
 
-    @OneToMany(mappedBy = "typeContactEntity", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "typeContactEntity", fetch = FetchType.LAZY)
     private List<EmailEntity> emailEntities;
 
     @OneToMany(mappedBy = "typeContactEntity", fetch = FetchType.LAZY)
