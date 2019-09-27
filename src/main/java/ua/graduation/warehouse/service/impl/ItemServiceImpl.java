@@ -2,6 +2,7 @@ package ua.graduation.warehouse.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.*;
 import ua.graduation.warehouse.service.ItemService;
@@ -16,6 +17,7 @@ import ua.graduation.warehouse.service.entity.response.ItemResponse;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
 import ua.graduation.warehouse.service.impl.exeption.FilterNotSupportedException;
 import ua.graduation.warehouse.service.impl.validation.ItemValidation;
+import ua.graduation.warehouse.service.impl.validation.ProductOwnerValidation;
 import ua.graduation.warehouse.utils.FormatterDate;
 
 import java.math.BigDecimal;
@@ -32,21 +34,26 @@ public class ItemServiceImpl implements ItemService {
 
     public final ItemRepository itemRepository;
     public final ItemValidation itemValidation;
-
+    private final ProductOwnerValidation productOwnerValidation;
 
     public final int showTopOwner;
 
-    public ItemServiceImpl(ItemRepository itemRepository, ItemValidation itemValidation,
-                           @Value("${item.top.owner}") int showTopOwner) {
+    public ItemServiceImpl(ItemRepository itemRepository,
+                           ItemValidation itemValidation,
+                           @Value("${item.top.owner}") int showTopOwner,
+                           ProductOwnerValidation productOwnerValidation
+                           ) {
         this.itemRepository = itemRepository;
         this.itemValidation = itemValidation;
         this.showTopOwner = showTopOwner;
+        this.productOwnerValidation = productOwnerValidation;
     }
 
     @Override
+    @Transactional
     public void addItem(Item item) {
+        productOwnerValidation.checkProductOwnerExist(item.getProductOwnerId());
         ItemEntity itemEntity = getFormItemEntity(item, TypeOperation.ADD);
-
         itemEntity.setCategories(
                 item.getCategories() != null ? getCategoryEntity(item.getCategories()) : null
         );
@@ -54,6 +61,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void addToCurrentItem(Item item) {
         List<ItemEntity> itemEntities = itemRepository.getItemBy(item.getItemId());
         itemValidation.checkItemsIsPresent(itemEntities, Collections.singletonList(item.getItemId()));
@@ -76,6 +84,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void withdraw(List<Item> itemList) {
         List<Integer> itemIdRequest = itemList.stream().map(Item::getItemId).collect(Collectors.toList());
         List<ItemEntity> itemsEntityCurrent = itemRepository.getListItemBy(itemIdRequest);

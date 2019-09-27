@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `service`.`t_item`
     `date_add`         DATETIME      NULL DEFAULT NULL,
     `product_owner_id` INT(11)       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX              `fk_t_item_t_product_owner1_idx` (`product_owner_id` ASC) VISIBLE,
+    INDEX              `fk_t_item_t_product_owner1_idx` (`product_owner_id` ASC),
     CONSTRAINT `fk_t_item_t_product_owner1`
         FOREIGN KEY (`product_owner_id`)
             REFERENCES `service`.`t_product_owner` (`id`)
@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS `service`.`t_category_has_t_item`
     `category_id` INT(11) NOT NULL,
     `item_id`     INT(11) NOT NULL,
     PRIMARY KEY (`category_id`, `item_id`),
-    INDEX         `fk_t_category_has_t_item_t_item1_idx` (`item_id` ASC) VISIBLE,
-    INDEX         `fk_t_category_has_t_item_t_category1_idx` (`category_id` ASC) VISIBLE,
+    INDEX         `fk_t_category_has_t_item_t_item1_idx` (`item_id` ASC),
+    INDEX         `fk_t_category_has_t_item_t_category1_idx` (`category_id` ASC),
     CONSTRAINT `fk_t_category_has_t_item_t_category1`
         FOREIGN KEY (`category_id`)
             REFERENCES `service`.`t_category` (`id`),
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `service`.`t_type_contact`
     `id`   INT(11)     NOT NULL,
     `type` VARCHAR(45) NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `type_UNIQUE` (`type` ASC) VISIBLE
+    UNIQUE INDEX `type_UNIQUE` (`type` ASC)
 )
     ENGINE = InnoDB
 AUTO_INCREMENT = 21
@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS `service`.`t_email`
     `type_contact_id`  INT(11)     NOT NULL,
     `product_owner_id` INT(11)     NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX              `fk_t_email_type_contact1_idx` (`type_contact_id` ASC) VISIBLE,
-    INDEX              `fk_t_emails_t_product_owner1_idx` (`product_owner_id` ASC) VISIBLE,
+    INDEX              `fk_t_email_type_contact1_idx` (`type_contact_id` ASC) ,
+    INDEX              `fk_t_emails_t_product_owner1_idx` (`product_owner_id` ASC) ,
     CONSTRAINT `fk_t_email_type_contact1`
         FOREIGN KEY (`type_contact_id`)
             REFERENCES `service`.`t_type_contact` (`id`),
@@ -164,8 +164,8 @@ CREATE TABLE IF NOT EXISTS `service`.`t_operation`
     `type_operation_id` INT(11)       NOT NULL,
     `item_id`           INT(11)       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX               `fk_t_operation_t_type_operation1_idx` (`type_operation_id` ASC) VISIBLE,
-    INDEX               `fk_t_operation_t_item1_idx` (`item_id` ASC) VISIBLE,
+    INDEX               `fk_t_operation_t_type_operation1_idx` (`type_operation_id` ASC) ,
+    INDEX               `fk_t_operation_t_item1_idx` (`item_id` ASC) ,
     CONSTRAINT `fk_t_operation_t_item`
         FOREIGN KEY (`item_id`)
             REFERENCES `service`.`t_item` (`id`),
@@ -189,8 +189,8 @@ CREATE TABLE IF NOT EXISTS `service`.`t_phone`
     `type_contact_id`  INT(11)     NULL DEFAULT NULL,
     `product_owner_id` INT(11)     NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    INDEX              `fk_t_phone_type_contact_idx` (`type_contact_id` ASC) VISIBLE,
-    INDEX              `fk_t_phones_t_product_owner1_idx` (`product_owner_id` ASC) VISIBLE,
+    INDEX              `fk_t_phone_type_contact_idx` (`type_contact_id` ASC) ,
+    INDEX              `fk_t_phones_t_product_owner1_idx` (`product_owner_id` ASC) ,
     CONSTRAINT `fk_t_phone_type_contact`
         FOREIGN KEY (`type_contact_id`)
             REFERENCES `service`.`t_type_contact` (`id`),

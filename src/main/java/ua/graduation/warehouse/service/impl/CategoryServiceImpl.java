@@ -1,6 +1,7 @@
 package ua.graduation.warehouse.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.CategoryRepository;
 import ua.graduation.warehouse.repository.model.CategoryEntity;
 import ua.graduation.warehouse.service.CategoryService;
@@ -16,12 +17,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void addCategory(Category category) {
-
        CategoryEntity categoryEntity =  CategoryEntity.builder()
                 .categoryName(category.getCategoryName())
                 .build();
-
         categoryRepository.addCategory(categoryEntity);
 
     }

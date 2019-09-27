@@ -1,6 +1,7 @@
 package ua.graduation.warehouse.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.ProductOwnerRepository;
 import ua.graduation.warehouse.repository.model.EmailEntity;
@@ -38,6 +39,7 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
     }
 
     @Override
+    @Transactional
     public int addProductOwner(ProductOwner productOwner) {
         Contacts contacts = productOwner.getContacts();
         List<EmailEntity> emailEntities = null;
@@ -64,6 +66,7 @@ public class ProductOwnerServiceImpl implements ProductOwnerService {
     }
 
     @Override
+    @Transactional
     public void deleteProductOwner(int idProductOwner) {
         if (!itemRepository.getOneEntityOwnersBy(idProductOwner).isEmpty()) {
             throw new OwnerСanNotBeDeletedException("owner can not be deleted, product owner has item");

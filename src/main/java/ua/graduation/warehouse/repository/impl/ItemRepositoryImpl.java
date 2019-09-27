@@ -15,7 +15,6 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
-@Transactional
 public class ItemRepositoryImpl implements ItemRepository {
 
     private final EntityManager entityManager;
@@ -25,13 +24,11 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    @Transactional
     public void addItem(ItemEntity itemEntity) {
         entityManager.persist(itemEntity);
     }
 
     @Override
-    @Transactional
     public void updateItem(ItemEntity itemEntity) {
 
         String item = "UPDATE ItemEntity i set i.count=:count where id=:id";
@@ -45,7 +42,6 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    @Transactional
     public void updateItem(List<ItemEntity> itemEntity) {
 
         String item = "UPDATE ItemEntity i set i.count=:count where id=:id";

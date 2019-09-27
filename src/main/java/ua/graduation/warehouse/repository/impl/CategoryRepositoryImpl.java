@@ -16,7 +16,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         this.entityManager = entityManager;
     }
 
-    @Transactional
     @Override
     public boolean addCategory(CategoryEntity categoryEntity) {
         entityManager.persist(categoryEntity);

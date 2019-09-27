@@ -23,16 +23,6 @@ Content-Type: application/json
         "phone": "55555555532",
         "typeContact": "Work"
       }
-    ],
-    "emails": [
-      {
-        "email": "viktorlsn@gmail.com",
-        "typeContact": "Work"
-      },
-      {
-        "email": "viktorlsn@gmail.com",
-        "typeContact": "Work"
-      }
     ]
   }
 }
@@ -80,7 +70,7 @@ Content-Type: application/json
 
 {
   "title": "шарика ручкы",
-  "count": 90,
+  "count": 1,
   "price": 5,
   "productOwnerId": 115
 
@@ -104,12 +94,12 @@ Content-Type: application/json
 {
 	"itemList": [
 	{
-		"itemId": 38,
-		"count": 0,
+		"itemId": 81,
+		"count": 1,
 		"productOwnerId": 84
 	},
       {
-        "itemId": 64,
+        "itemId": 81,
         "count": 0,
         "productOwnerId": 84
       }

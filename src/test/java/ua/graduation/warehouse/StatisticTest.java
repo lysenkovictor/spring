@@ -14,6 +14,7 @@ import ua.graduation.warehouse.service.entity.request.ItemStatisticInfo;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
 import ua.graduation.warehouse.service.impl.ItemServiceImpl;
 import ua.graduation.warehouse.service.impl.validation.ItemValidation;
+import ua.graduation.warehouse.service.impl.validation.ProductOwnerValidation;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -32,8 +33,12 @@ public class StatisticTest {
     @Mock
     private ItemValidation itemValidation = Mockito.mock(ItemValidation.class);
 
+    @Mock
+    private ProductOwnerValidation productOwnerValidation = Mockito.mock(ProductOwnerValidation.class);
+
+
     private int topOwnersCount = 5;
-    private ItemServiceImpl itemService = new ItemServiceImpl(itemRepository, itemValidation, topOwnersCount);
+    private ItemServiceImpl itemService = new ItemServiceImpl(itemRepository, itemValidation, topOwnersCount, productOwnerValidation);
 
 
     @Test
