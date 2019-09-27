@@ -16,7 +16,7 @@ public class EmailEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "emeil")
+    @Column(name = "email")
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)

@@ -23,6 +23,16 @@ Content-Type: application/json
         "phone": "55555555532",
         "typeContact": "Work"
       }
+    ],
+    "emails": [
+      {
+        "email": "55555555532",
+        "typeContact": "private"
+      },
+      {
+        "email": "55555555532",
+        "typeContact": "private"
+      }
     ]
   }
 }
@@ -50,11 +60,10 @@ Content-Type: application/json
 }
 
 ###22222
-
-DELETE http://localhost:8080/owner/delete/115
+DELETE http://localhost:8080/owner/delete/122
 
 ###33333
-GET http://localhost:8080/item/getByOwner/115
+GET http://localhost:8080/item/getByOwner/122
 
 ###44444
 POST http://localhost:8080/category/add
@@ -69,11 +78,10 @@ POST http://localhost:8080/item/add
 Content-Type: application/json
 
 {
-  "title": "шарика ручкы",
+  "title": "тест",
   "count": 1,
   "price": 5,
-  "productOwnerId": 115
-
+  "productOwnerId": 118
 }
 
 ###7777
