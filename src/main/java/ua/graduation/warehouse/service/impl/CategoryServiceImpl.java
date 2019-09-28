@@ -18,11 +18,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void addCategory(Category category) {
+    public int addCategory(Category category) {
        CategoryEntity categoryEntity =  CategoryEntity.builder()
-                .categoryName(category.getCategoryName())
-                .build();
+               .categoryName(category.getCategoryName()).build();
         categoryRepository.addCategory(categoryEntity);
-
+        category.setId(categoryEntity.getId());
+        return categoryEntity.getId();
     }
 }

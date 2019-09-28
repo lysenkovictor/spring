@@ -3,7 +3,6 @@ package ua.graduation.warehouse.service.impl.validation;
 import org.springframework.stereotype.Service;
 import ua.graduation.warehouse.repository.model.ItemEntity;
 import ua.graduation.warehouse.service.catalog.TypeOperation;
-import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 import ua.graduation.warehouse.service.entity.date.FilterDate;
 import ua.graduation.warehouse.service.entity.request.Item;
 import ua.graduation.warehouse.service.impl.exeption.ItemNotFoundException;
@@ -38,7 +37,6 @@ public class ItemValidation {
         if (!idNotFound.isEmpty()) {
             throw new ItemNotFoundException(String.format("%s - item not found", idNotFound));
         }
-
     }
 
     public void checkExistTypeOperation(String type) {
@@ -56,4 +54,9 @@ public class ItemValidation {
             throw  new NotFoundTypeOperationException("available types contact: " + Arrays.toString(FilterDate.values()));
         }
     }
+
+    public void setItemPositive(Item item) {
+        item.setCount(Math.abs(item.getCount()));
+    }
+
 }

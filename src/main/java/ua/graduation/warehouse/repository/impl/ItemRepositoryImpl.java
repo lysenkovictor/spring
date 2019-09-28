@@ -1,8 +1,6 @@
 package ua.graduation.warehouse.repository.impl;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import ua.graduation.warehouse.repository.ItemRepository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
 import ua.graduation.warehouse.repository.model.OperationEntity;
@@ -89,7 +87,6 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<ItemEntity> getListItemBy(List<Integer> idItem) {
         Query query = entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.id IN (:listId)")
                 .setParameter("listId", idItem);
-
         return query.getResultList();
     }
 

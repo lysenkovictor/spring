@@ -16,6 +16,7 @@ import ua.graduation.warehouse.service.entity.request.ProductOwner;
 import ua.graduation.warehouse.service.entity.response.ItemResponse;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
 import ua.graduation.warehouse.service.impl.exeption.FilterNotSupportedException;
+import ua.graduation.warehouse.service.impl.validation.CategoryValidation;
 import ua.graduation.warehouse.service.impl.validation.ItemValidation;
 import ua.graduation.warehouse.service.impl.validation.ProductOwnerValidation;
 import ua.graduation.warehouse.utils.FormatterDate;
@@ -28,35 +29,36 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 
 
-@Service
-public class ItemServiceImpl implements ItemService {
+@Service public class ItemServiceImpl implements ItemService {
 
 
-    public final ItemRepository itemRepository;
-    public final ItemValidation itemValidation;
+    private final ItemRepository itemRepository;
+    private final ItemValidation itemValidation;
+    private final CategoryValidation categoryValidation;
     private final ProductOwnerValidation productOwnerValidation;
-
-    public final int showTopOwner;
+    private final int showTopOwner;
 
     public ItemServiceImpl(ItemRepository itemRepository,
                            ItemValidation itemValidation,
                            @Value("${item.top.owner}") int showTopOwner,
-                           ProductOwnerValidation productOwnerValidation
+                           ProductOwnerValidation productOwnerValidation,
+                           CategoryValidation categoryValidation
                            ) {
         this.itemRepository = itemRepository;
         this.itemValidation = itemValidation;
         this.showTopOwner = showTopOwner;
         this.productOwnerValidation = productOwnerValidation;
+        this.categoryValidation = categoryValidation;
     }
 
     @Override
     @Transactional
     public void addItem(Item item) {
         productOwnerValidation.checkProductOwnerExist(item.getProductOwnerId());
+        itemValidation.setItemPositive(item);
         ItemEntity itemEntity = getFormItemEntity(item, TypeOperation.ADD);
         itemEntity.setCategories(
-                item.getCategories() != null ? getCategoryEntity(item.getCategories()) : null
-        );
+                item.getCategories() != null ? getCategoryEntity(item.getCategories()) : null);
         itemRepository.addItem(itemEntity);
     }
 
@@ -65,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
     public void addToCurrentItem(Item item) {
         List<ItemEntity> itemEntities = itemRepository.getItemBy(item.getItemId());
         itemValidation.checkItemsIsPresent(itemEntities, Collections.singletonList(item.getItemId()));
-
+        itemValidation.setItemPositive(item);
         ItemEntity itemEntityCurrent = itemEntities.iterator().next();
 
         //формируем сущность в таблицу операций (количество item  оставляем из запроса)
@@ -93,11 +95,21 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemEntity> changeItemEntity = new ArrayList<>();
         for (Item item: itemList) {
-            for (ItemEntity itemCurrent:itemsEntityCurrent) {
+            itemValidation.setItemPositive(item);
+            for (ItemEntity itemCurrent : itemsEntityCurrent) {
                 if (item.getItemId() == itemCurrent.getId()) {
                     itemValidation.checkCountItemForWithdraw(itemCurrent.getCount(), item.getCount(), itemCurrent.getId());
+                    item.setPrice(itemCurrent.getPrice());
+                    OperationEntity operationEntity = getFormOperationEntity(item, TypeOperation.WITHDRAW);
+
+                    //Обновляем количество в таблице item
                     item.setCount(itemCurrent.getCount() - item.getCount());
-                    changeItemEntity.add(getFormItemEntity(item, TypeOperation.WITHDRAW));
+                    ItemEntity itemEntity = getFormItemEntity(item);
+
+                    operationEntity.setItemEntity(itemEntity);
+                    itemEntity.setOperationEntities(Collections.singletonList(operationEntity));
+
+                    changeItemEntity.add(itemEntity);
                     break;
                 }
             }
@@ -174,7 +186,9 @@ public class ItemServiceImpl implements ItemService {
             listStatistic.add(statisticInfoResponse);
         }
         listStatistic.sort(Comparator.comparing(StatisticInfoResponse::getTotalCost, Comparator.reverseOrder()));
-        return listStatistic.stream().limit(showTopOwner).collect(Collectors.toList());
+        return listStatistic.stream()
+                .filter(el->el.getTotalCount()>0)
+                .limit(showTopOwner).collect(Collectors.toList());
 
     }
 
@@ -210,6 +224,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<CategoryEntity> getCategoryEntity(List<Integer> categoryId) {
+        categoryValidation.checkCategoryIsPresent(categoryId);
         return categoryId.stream().map(el->CategoryEntity.builder().id(el).build())
                 .collect(Collectors.toList());
     }
@@ -237,12 +252,11 @@ public class ItemServiceImpl implements ItemService {
         int totalCount = 0;
 
         for (OperationEntity item : operationEntities) {
-            if (item.getCount() > 0 && item.getPrice().compareTo(BigDecimal.ZERO) > 0) {
                 BigDecimal costItem = item.getPrice().multiply(BigDecimal.valueOf(item.getCount()));
                 totalCost = totalCost.add(costItem);
                 totalCount += item.getCount();
-            }
         }
+
         return StatisticInfoResponse.builder()
                 .totalCount(totalCount)
                 .totalCost(totalCost)

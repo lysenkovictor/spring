@@ -28,6 +28,6 @@ public class ControllerCategory {
     @ResponseBody
     public ResponseEntity createProductOwner(@Valid @RequestBody Category category) {
         categoryService.addCategory(category);
-        return controllerResponseEntity.getResponseEntityStatusHttpStatusOk();
+        return controllerResponseEntity.getResponseEntityStatusHttpStatusOk(category);
     }
 }

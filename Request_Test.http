@@ -7,7 +7,7 @@
 
 
 
-###11111
+###
 
 POST http://localhost:8080/owner/add
 Content-Type: application/json
@@ -15,8 +15,8 @@ Content-Type: application/json
 
 {
   "companyName":"тест3",
-  "firstName": "test3",
   "lastName": "test3",
+  "firstName": "test",
   "contacts": {
     "phones": [
       {
@@ -37,9 +37,8 @@ Content-Type: application/json
   }
 }
 
-###22222
-
-###11111
+###
+###
 
 POST http://localhost:8080/owner/add
 Content-Type: application/json
@@ -60,7 +59,7 @@ Content-Type: application/json
 }
 
 ###22222
-DELETE http://localhost:8080/owner/delete/122
+DELETE http://localhost:8080/owner/delete/123
 
 ###33333
 GET http://localhost:8080/item/getByOwner/122
@@ -70,8 +69,22 @@ POST http://localhost:8080/category/add
 Content-Type: application/json
 
 {
-  "categoryName": "new category0000"
+  "categoryName": "new category00002"
 }
+
+###6666
+POST http://localhost:8080/item/add
+Content-Type: application/json
+
+{
+  "count": 1,
+  "price": 5,
+  "productOwnerId": 124,
+  "categories": [21]
+}
+
+###7777
+
 
 ###6666
 POST http://localhost:8080/item/add
@@ -81,17 +94,19 @@ Content-Type: application/json
   "title": "тест",
   "count": 1,
   "price": 5,
-  "productOwnerId": 118
+  "productOwnerId": 122
 }
 
-###7777
+###
 
+
+### Добавление товара в существующий
 POST http://localhost:8080/item/update
 Content-Type: application/json
 
 {
-  "itemId": 90,
-  "count": 4000
+  "itemId": 23,
+  "count": 5000
 }
 
 ###8888
@@ -100,18 +115,16 @@ POST http://localhost:8080/item/withdraw
 Content-Type: application/json
 
 {
-	"itemList": [
-	{
-		"itemId": 81,
-		"count": 1,
-		"productOwnerId": 84
-	},
-      {
-        "itemId": 81,
-        "count": 0,
-        "productOwnerId": 84
-      }
-     ]
+  "itemList": [
+    {
+      "itemId": 82,
+      "count": 1
+    },
+    {
+      "itemId": 81,
+      "count": -1
+    }
+  ]
 }
 
 ###9999
@@ -121,7 +134,7 @@ Content-Type: application/json
 
 {
   "period": "CURRENT_DAY",
-  "typeOperation": "ADD"
+  "typeOperation": "WITHDRAW"
 }
 
 

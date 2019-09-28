@@ -11,8 +11,10 @@ import ua.graduation.warehouse.repository.model.ProductOwnerEntity;
 import ua.graduation.warehouse.service.catalog.TypeOperation;
 import ua.graduation.warehouse.service.entity.date.FilterBetweenDate;
 import ua.graduation.warehouse.service.entity.request.ItemStatisticInfo;
+import ua.graduation.warehouse.service.entity.request.ProductOwner;
 import ua.graduation.warehouse.service.entity.response.StatisticInfoResponse;
 import ua.graduation.warehouse.service.impl.ItemServiceImpl;
+import ua.graduation.warehouse.service.impl.validation.CategoryValidation;
 import ua.graduation.warehouse.service.impl.validation.ItemValidation;
 import ua.graduation.warehouse.service.impl.validation.ProductOwnerValidation;
 
@@ -34,11 +36,15 @@ public class StatisticTest {
     private ItemValidation itemValidation = Mockito.mock(ItemValidation.class);
 
     @Mock
+    CategoryValidation categoryValidation = Mockito.mock(CategoryValidation.class);
+
+    @Mock
     private ProductOwnerValidation productOwnerValidation = Mockito.mock(ProductOwnerValidation.class);
 
 
     private int topOwnersCount = 5;
-    private ItemServiceImpl itemService = new ItemServiceImpl(itemRepository, itemValidation, topOwnersCount, productOwnerValidation);
+    private ItemServiceImpl itemService = new ItemServiceImpl(itemRepository, itemValidation,
+            topOwnersCount, productOwnerValidation, categoryValidation);
 
 
     @Test
@@ -161,18 +167,55 @@ public class StatisticTest {
         List<StatisticInfoResponse> infoResponse
                 = itemService.getTotalCostItemsTopProductOwner();
 
-        //Then
-
-        infoResponse.stream().forEach(el-> System.out.println(el));
-
+        assertThat(infoResponse).isEqualTo(getListStatisticInfoExpectedResult());
     }
 
-
     public ItemStatisticInfo getAnyItemStatisticInfo() {
-        return ItemStatisticInfo.builder()
+      return ItemStatisticInfo.builder()
                 .period("CURRENT_DAY")
                 .typeOperation("WITHDRAW")
                 .build();
+
+    }
+
+    public  List<StatisticInfoResponse> getListStatisticInfoExpectedResult() {
+        ArrayList<ProductOwnerEntity>  productOwnerEntities = getListProductOwner(6);
+
+         StatisticInfoResponse statisticInfoResponse = StatisticInfoResponse.builder()
+                .totalCost(new BigDecimal("899999.91"))
+                .totalCount(9)
+                .productOwner(getProductOwnerResponse(productOwnerEntities.get(2)))
+                .build();
+
+        StatisticInfoResponse statisticInfoResponse2 = StatisticInfoResponse.builder()
+                .totalCost(new BigDecimal("15000"))
+                .totalCount(1000)
+                .productOwner(getProductOwnerResponse(productOwnerEntities.get(1)))
+                .build();
+
+        StatisticInfoResponse statisticInfoResponse3 = StatisticInfoResponse.builder()
+                .totalCost(new BigDecimal("5001.5"))
+                .totalCount(5015)
+                .productOwner(getProductOwnerResponse(productOwnerEntities.get(0)))
+                .build();
+
+        BigDecimal totalCost = new BigDecimal("455.50");
+        int totalCount = 10;
+
+        StatisticInfoResponse statisticInfoResponse4 = StatisticInfoResponse.builder()
+                .totalCost(totalCost)
+                .totalCount(totalCount)
+                .productOwner(getProductOwnerResponse(productOwnerEntities.get(3)))
+                .build();
+
+        StatisticInfoResponse statisticInfoResponse5 = StatisticInfoResponse.builder()
+                .totalCost(totalCost)
+                .totalCount(totalCount)
+                .productOwner(getProductOwnerResponse(productOwnerEntities.get(4)))
+                .build();
+
+        return asList(statisticInfoResponse, statisticInfoResponse2, statisticInfoResponse3
+        ,statisticInfoResponse4,statisticInfoResponse5);
     }
 
     private List<OperationEntity> getListOperation() {
@@ -194,16 +237,16 @@ public class StatisticTest {
         ArrayList<ItemEntity> itemEntities = new ArrayList<>();
 
         // (0,75   * 15 ) + (5000 * 1) = 5011.25
-        //У клиента 2
-        itemEntities.add(getItemEntity(new BigDecimal("0.75"), 15, productOwnerEntities.get(0)));
+        //У клиента > item
+        itemEntities.add(getItemEntity(new BigDecimal("0.1"), 15, productOwnerEntities.get(0)));
         itemEntities.add(getItemEntity(new BigDecimal("1"), 5000, productOwnerEntities.get(0)));
 
-        //Исключаем (количество элементов 0)
+        //У клиента есть item > price 0
         // (15 * 1000) = 15000
         itemEntities.add(getItemEntity(new BigDecimal("15"), 1000, productOwnerEntities.get(1)));
         itemEntities.add(getItemEntity(new BigDecimal("1000"), 0, productOwnerEntities.get(1)));
 
-        // (99999.99 * 9) = 899999.91
+        //(899999.91)
         itemEntities.add(getItemEntity(new BigDecimal("99999.99"), 9, productOwnerEntities.get(2)));
 
         //455.5
@@ -215,7 +258,6 @@ public class StatisticTest {
 
         //9
         itemEntities.add(getItemEntity(new BigDecimal("3"), 3, productOwnerEntities.get(5)));
-
 
         return itemEntities;
     }
@@ -229,8 +271,6 @@ public class StatisticTest {
                 .build();
     }
 
-
-
     public ArrayList<ProductOwnerEntity> getListProductOwner (int countOwnrs) {
         ArrayList<ProductOwnerEntity> productOwnerEntities = new ArrayList();
 
@@ -239,13 +279,22 @@ public class StatisticTest {
                     .idProductOwner(i)
                     .lastName("lastName " + i)
                     .firstName("firstName " + i)
-                    .companyName("test")
+                    .companyName(null)
                     .build();
 
             productOwnerEntities.add(productOwner);
         }
 
         return productOwnerEntities;
-
     }
+
+    public ProductOwner getProductOwnerResponse(ProductOwnerEntity productOwnerEntity) {
+       return ProductOwner.builder()
+                .firstName(productOwnerEntity.getFirstName())
+                .lastName(productOwnerEntity.getLastName())
+                .idProductOwner(productOwnerEntity.getIdProductOwner())
+               .companyName(Optional.empty())
+                .build();
+    }
+
 }

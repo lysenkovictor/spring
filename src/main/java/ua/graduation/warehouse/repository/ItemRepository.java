@@ -1,6 +1,5 @@
 package ua.graduation.warehouse.repository;
 
-import org.springframework.stereotype.Repository;
 import ua.graduation.warehouse.repository.model.ItemEntity;
 import ua.graduation.warehouse.repository.model.OperationEntity;
 import ua.graduation.warehouse.service.catalog.TypeOperation;

@@ -7,7 +7,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -27,9 +26,11 @@ public class ItemEntity {
     @Column(name = "id")
     private int id;
 
+    @NonNull
     @Column(name = "count")
     private int count;
 
+    @NonNull
     @Column(name = "price")
     private BigDecimal price;
 
@@ -44,7 +45,7 @@ public class ItemEntity {
     private LocalDateTime dateAdd;
 
     @JsonBackReference
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "t_category_has_t_item",
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))

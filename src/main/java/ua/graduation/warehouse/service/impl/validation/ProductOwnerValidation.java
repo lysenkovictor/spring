@@ -23,7 +23,7 @@ public class ProductOwnerValidation {
 
     public void checkContactExist(Contacts contacts) {
         if (contacts.getEmails() == null && contacts.getPhones() == null) {
-            throw new ContactNotExistException("Client should have but at least one contact");
+            throw new ContactNotExistException("client should have at least one contact");
         }
     }
 
@@ -31,12 +31,12 @@ public class ProductOwnerValidation {
         try {
             TypeContact.valueOf(type.toUpperCase());
         }catch (RuntimeException ex) {
-            throw  new NotFoundTypeContactException("available types contact: " + Arrays.toString(TypeContact.values()));
+            throw  new NotFoundTypeContactException("available types of contact: " + Arrays.toString(TypeContact.values()));
         }
     }
 
     public void checkProductOwnerExist(int productOwnerId) {
         if (productOwnerRepository.getSingletonListProductOwner(productOwnerId).isEmpty())
-            throw  new NotFoundOwner("you should be add productOwner before add item");
+            throw  new NotFoundOwner("owner not found. You should add productOwner before adding item");
     }
 }
