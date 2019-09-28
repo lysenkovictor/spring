@@ -79,8 +79,8 @@ Content-Type: application/json
 {
   "count": 1,
   "price": 5,
-  "productOwnerId": 124,
-  "categories": [21]
+  "productOwnerId": 126,
+  "categories": [21,22]
 }
 
 ###7777
@@ -105,7 +105,7 @@ POST http://localhost:8080/item/update
 Content-Type: application/json
 
 {
-  "itemId": 23,
+  "itemId": 81,
   "count": 5000
 }
 
@@ -122,7 +122,7 @@ Content-Type: application/json
     },
     {
       "itemId": 81,
-      "count": -1
+      "count": 1
     }
   ]
 }
@@ -133,8 +133,8 @@ POST http://localhost:8080/item/totalStatistic
 Content-Type: application/json
 
 {
-  "period": "CURRENT_DAY",
-  "typeOperation": "WITHDRAW"
+  "period": "LAST_DAY",
+  "typeOperation": "ADD"
 }
 
 
