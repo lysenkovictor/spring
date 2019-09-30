@@ -1,6 +1,8 @@
 Warehouse storage service
-General requirements
+
+- General requirements: 
 Create service to handle current warehouse storage status.
+
 Required functionality
 * add new product owner
 * remove product owner (only product owners without any item currently
@@ -15,7 +17,8 @@ several different items for one product owner at once)
 and withdrawn for the last day/month
 * provide statistic information about active product owners: list of top 5
 product owners according to the total cost of items currently stored at warehouse, sorted by total price, starting with the biggest one
-Required data information
+
+- Required data information
 Item:
 * title
 * category (any item could have several categories) • count
