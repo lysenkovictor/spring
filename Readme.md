@@ -19,7 +19,7 @@ and withdrawn for the last day/month
 product owners according to the total cost of items currently stored at warehouse, sorted by total price, starting with the biggest one.
 
 
-- Required data information
+Required data information
 
 Item:
 * title
